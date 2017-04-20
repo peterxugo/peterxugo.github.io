@@ -94,13 +94,13 @@
 <meta property="og:url" content="http://yoursite.com/2017/04/20/Lucene-打分算法/index.html">
 <meta property="og:site_name" content="Peter's blog">
 <meta property="og:description" content="Lucene是什么 Lucene 是一个基于 Java 的全文信息检索工具包，它不是一个完整的搜索应用程序，而是为你的应用程序提供索引和搜索功能。Lucene 目前是 Apache Jakarta 家族中的一个开源项目。也是目前最为流行的基于 Java 开源全文检索工具包。 Lucene总的来说是：  一个高效的，可扩展的，全文检索库。 全部用Java实现，同时提供python接口（pylucen">
-<meta property="og:image" content="http://yoursite.com/2017/04/20/Lucene-打分算法/quiver-image-url/5C41A0310E13CD79AC0A2C89D18C9E7C.jpg">
-<meta property="og:image" content="http://yoursite.com/2017/04/20/Lucene-打分算法/quiver-image-url/8D3C95EA8D7E252776A52CEC898710A0.jpg">
-<meta property="og:updated_time" content="2017-04-20T09:28:37.000Z">
+<meta property="og:image" content="http://yoursite.com/images/LuceneSearch.jpg">
+<meta property="og:image" content="http://yoursite.com/images/vsm.jpg">
+<meta property="og:updated_time" content="2017-04-20T09:38:58.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Lucene 打分算法">
 <meta name="twitter:description" content="Lucene是什么 Lucene 是一个基于 Java 的全文信息检索工具包，它不是一个完整的搜索应用程序，而是为你的应用程序提供索引和搜索功能。Lucene 目前是 Apache Jakarta 家族中的一个开源项目。也是目前最为流行的基于 Java 开源全文检索工具包。 Lucene总的来说是：  一个高效的，可扩展的，全文检索库。 全部用Java实现，同时提供python接口（pylucen">
-<meta name="twitter:image" content="http://yoursite.com/2017/04/20/Lucene-打分算法/quiver-image-url/5C41A0310E13CD79AC0A2C89D18C9E7C.jpg">
+<meta name="twitter:image" content="http://yoursite.com/images/LuceneSearch.jpg">
 
 
 
@@ -315,7 +315,7 @@
               
                 <span class="post-meta-item-text">更新于</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2017-04-20T17:28:37+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2017-04-20T17:38:58+08:00">
                 2017-04-20
               </time>
             
@@ -383,8 +383,8 @@
 <p>举个栗子，一篇小说（斗破苍穹）信息可以称为一个文档，小说信息又包含多个域(字段)，例如：标题（斗破苍穹）、作者、简介、最后更新时间等等，对标题这个域(字段)采用分词技术又可以得到一个或者多个词元（斗、破、苍、穹）。</p>
 <h2 id="lucene检索过程">Lucene检索过程</h2>
 <div class="figure">
-<img src="quiver-image-url/5C41A0310E13CD79AC0A2C89D18C9E7C.jpg" alt="3634917\\\\\\\\\\\\\\\_1265048535cS3A.jpg">
-<p class="caption">3634917\\\\\\\\\\\\\\\_1265048535cS3A.jpg</p>
+<img src="/images/LuceneSearch.jpg">
+
 </div>
 <h2 id="打分算法">打分算法</h2>
 <h3 id="bir布尔模型">BIR（布尔模型）</h3>
@@ -392,7 +392,7 @@
 <h3 id="tf-idf词频-反词频">TF-IDF（词频-反词频）</h3>
 <p>本质上，TF-IDF通过确定特定文档中的单词的相对频率与该单词在整个文档语料库中的反比例相比较起作用。 直观地，该计算确定给定单词在特定文档中的相关性。 在一个单一或一小组文件中不常见的单词往往比普通单词（如冠词和介词）具有更高的TF-IDF值。不同的情景下实现的TF-IDF有一些微小不同的地方，但是总体上计算的方式如下： 给定一个稳定集合<span class="math inline">\(D\)</span>，一个单词 <span class="math inline">\(w\)</span> 和一个文档 <span class="math inline">\(d \in D\)</span>,我们计算<span class="math display">\[\mathcal{W}_d=f_{w,d}*log(\frac{|D|}{f_{w,D}})\]</span>其中 <span class="math inline">\(f_{w,d}\)</span> 等于词 <span class="math inline">\(w\)</span> 在文档 <span class="math inline">\(d\)</span> 中出现的次数，<span class="math inline">\(|D|\)</span>是文档全集的大小, <span class="math inline">\(f_{w,D}\)</span> 是词 <span class="math inline">\(w\)</span> 在全集中出现的次数(Salton &amp; Buckley, 1988, Berger, et al, 2000)。假设<span class="math inline">\(|D|\thicksim f_{w,d}\)</span>,即语料库的大小大接近于<span class="math inline">\(w\)</span>在集合<span class="math inline">\(D\)</span>的频率，对于一些非常小的常数<span class="math inline">\(c\)</span>，满足 <span class="math inline">\(1 &lt; log(\frac{|D|}{f_{w,D}}) &lt; c\)</span> ,那么<span class="math inline">\(w\)</span>将会比<span class="math inline">\(f_{w,d}\)</span>小但是仍然是正的,这意味着<span class="math inline">\(w\)</span>在整个语料库中比较常见，但在整个<span class="math inline">\(D\)</span>句中仍然保持一定的重要性，例如TF-IDF在《新约》中的测试“Jesus”，就会是这种情况，与我们更加相关的例子在联合国文档的语料中“united”的结果可以预期到也是这种情况。对于非常常见的词语也是如此，例如冠词，代词和介词，它们本身在查询中没有任何相关的含义（除非用户明确要求含有这样的常用单词的文档）。 因此，这样的常用词得到非常低的TF-IDF分数，使得它们在搜索中基本上可以忽略不计。假设<span class="math inline">\(f_{w,d}\)</span>非常大，<span class="math inline">\(f_{w,D}\)</span>很小，那么<span class="math inline">\(log(\frac{|D|}{f_{w,D}})\)</span>将会变得相当大，所以<span class="math inline">\(w_d\)</span>同样会很大，因为具有高<span class="math inline">\(w_d\)</span>的词意味着<span class="math inline">\(w\)</span>是<span class="math inline">\(d\)</span>中的重要词，而在<span class="math inline">\(D\)</span>中不常见。这个词被认为具有很大的有辨识力的。</p>
 <h3 id="vsm向量空间模型">VSM（向量空间模型）</h3>
-<p><img src="quiver-image-url/8D3C95EA8D7E252776A52CEC898710A0.jpg" alt="Vector_space_model.jpg"> 向量空间模型 (VSM：Vector Space Model) 是一个应用于信息过滤, 信息撷取, 索引以及评估相关性的代数模型。由Salton等人于60年代提出，并成功地应用于著名的SMART文本检索系统。文件(语料)被视为索引词(关键字)形成的多次元向量空间， 索引词的集合通常为文件中至少出现过一次的词组。在文本检索中，文档与查询词可以表示为以下向量空间模型[1] :<span class="math display">\[d_j = (w_{1,j},w_{2,j},…,w_{t,j})\]</span><span class="math display">\[
+<p><img src="/images/vsm.jpg"> 向量空间模型 (VSM：Vector Space Model) 是一个应用于信息过滤, 信息撷取, 索引以及评估相关性的代数模型。由Salton等人于60年代提出，并成功地应用于著名的SMART文本检索系统。文件(语料)被视为索引词(关键字)形成的多次元向量空间， 索引词的集合通常为文件中至少出现过一次的词组。在文本检索中，文档与查询词可以表示为以下向量空间模型[1] :<span class="math display">\[d_j = (w_{1,j},w_{2,j},…,w_{t,j})\]</span><span class="math display">\[
 q = (w_{1,q},w_{2,q},…,w_{t,q})\]</span></p>
 <p>据文档相似度理论的假设，如要在一次关键词查询中计算各文档间的相关排序，只需比较每个文档向量和原先查询向量（跟文档向量的类型是相同的）之间的角度偏差。 实际上，计算向量之间夹角的余弦比直接计算夹角本身要简单。 <span class="math display">\[{\displaystyle \cos {\theta }={\frac {\mathbf {d} \cdot \mathbf {q} }{\left\|\mathbf {d} \right\|\left\|\mathbf {q} \right\|}}}\]</span> 其中 <span class="math inline">\({\displaystyle \mathbf {d_{2}} \cdot \mathbf {q} }\)</span>是文档向量（即上 图中的d2）和查询向量（图中的q）的点乘。 <span class="math inline">\({\displaystyle \left\|\mathbf {d_{2}} \right\|}\)</span>是向量d2的模，而 <span class="math inline">\({\displaystyle \left\|\mathbf {q} \right\|}\)</span>是向量q的模。向量的模通过下面的公式来计算： <span class="math display">\[{\displaystyle \left\|\mathbf {v} \right\|={\sqrt {\sum _{i=1}^{n}v_{i}^{2}}}}\]</span> 由于这个模型所考虑的所有向量都是每个元素严格非负的，因此如果余弦值为零，则表示查询向量和文档向量是正交的，即不符合（换句话说，就是检索项在文档中没有找到）</p>
 <h3 id="lucene打分模型">Lucene打分模型</h3>
@@ -407,7 +407,10 @@ q = (w_{1,q},w_{2,q},…,w_{t,q})\]</span></p>
 </ol>
 <p>于是我们得到计算分数公式如下： <span class="math display">\[sim(\mathbf{q}, \mathbf{d}) = w_d \cdot \sum_{f \in d}w_f \cdot sim(\mathbf{q},\mathbf{d}_f)\]</span> <span class="math display">\[sim(\mathbf{q},\mathbf{d}_f) = f(\mathbf{q},\mathbf{d}_f) \cdot ( \frac{(\mathbf{w}_{q}\circ\mathbf{q}) \bullet \mathbf{d}_f}{||(\mathbf{w}_{q}\circ\mathbf{q})||} \cdot f(\mathbf{d}_f)) \]</span></p>
 <p>其中： &gt; <span class="math inline">\(\circ\)</span> 是<a href="https://zh.wikipedia.org/wiki/%E7%9F%A9%E9%99%A3%E4%B9%98%E6%B3%95#.E7.B4.94.E9.87.8F.E4.B9.98.E7.A9.8D" target="_blank" rel="external">“阿达马乘积”</a>, &gt; <span class="math inline">\(\bullet\)</span> 是矩阵的“点积”, &gt; <span class="math inline">\(\mathbf{q}\)</span>是查询<span class="math inline">\(q\)</span>词元的tf-idf单位向量, &gt; <span class="math inline">\(\mathbf{d}_f\)</span>是文档 <span class="math inline">\(d\)</span> 的域 <span class="math inline">\(f\)</span> 以向量<span class="math inline">\(\mathbf{q}\)</span>为基的tf-idf值向量, &gt; <span class="math inline">\(||\mathbf{q}||\)</span>是向量<span class="math inline">\(\mathbf{q}\)</span>欧几里德范数 &gt; <span class="math inline">\(\mathbf{w}_q\)</span>是向量<span class="math inline">\(\mathbf{q}\)</span>中各个词元的权重向量</p>
-<p>具体的 <span class="math display">\[f(\mathbf{q},\mathbf{d}_f) = \frac{|\mathbf{q} \cap \mathbf{d}_f|}{|\mathbf{q}|}\]</span><span class="math display">\[tf_{t,d} = f_{t,d} ^\frac{1}{2}\]</span><span class="math display">\[idf_{t,d}= 1+ log(\frac{|D|+1}{f_{t,D}+1})\]</span><span class="math display">\[f(\mathbf{d}_f) = t^{\frac{1}{2}} \cdot w_f\]</span> 考虑到Lucene允许在同一个文档中写入多个同名的域，所以<span class="math display">\[w_f = \prod w_{f,t}  \]</span> ## 优缺点 ##Elasticsearch 5 (Lucene 6) 的 BM25 算法 ## 评价指标Lucece</p>
+<p>具体的 <span class="math display">\[f(\mathbf{q},\mathbf{d}_f) = \frac{|\mathbf{q} \cap \mathbf{d}_f|}{|\mathbf{q}|}\]</span><span class="math display">\[tf_{t,d} = f_{t,d} ^\frac{1}{2}\]</span><span class="math display">\[idf_{t,d}= 1+ log(\frac{|D|+1}{f_{t,D}+1})\]</span><span class="math display">\[f(\mathbf{d}_f) = t^{\frac{1}{2}} \cdot w_f\]</span> 考虑到Lucene允许在同一个文档中写入多个同名的域，所以<span class="math display">\[w_f = \prod w_{f,t}  \]</span></p>
+<h2 id="优缺点">优缺点</h2>
+<h2 id="elasticsearch-5-lucene-6-的-bm25-算法">Elasticsearch 5 (Lucene 6) 的 BM25 算法</h2>
+<h2 id="评价指标lucece">评价指标Lucece</h2>
 
       
     </div>
@@ -587,7 +590,7 @@ q = (w_{1,q},w_{2,q},…,w_{t,q})\]</span></p>
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#lucene是什么"><span class="nav-text">Lucene是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lucene数学模型"><span class="nav-text">Lucene数学模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#文档域字段词元"><span class="nav-text">文档，域(字段)，词元</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lucene检索过程"><span class="nav-text">Lucene检索过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#打分算法"><span class="nav-text">打分算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#bir布尔模型"><span class="nav-text">BIR（布尔模型）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tf-idf词频-反词频"><span class="nav-text">TF-IDF（词频-反词频）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#vsm向量空间模型"><span class="nav-text">VSM（向量空间模型）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lucene打分模型"><span class="nav-text">Lucene打分模型</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#lucene是什么"><span class="nav-text">Lucene是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lucene数学模型"><span class="nav-text">Lucene数学模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#文档域字段词元"><span class="nav-text">文档，域(字段)，词元</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lucene检索过程"><span class="nav-text">Lucene检索过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#打分算法"><span class="nav-text">打分算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#bir布尔模型"><span class="nav-text">BIR（布尔模型）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tf-idf词频-反词频"><span class="nav-text">TF-IDF（词频-反词频）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#vsm向量空间模型"><span class="nav-text">VSM（向量空间模型）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lucene打分模型"><span class="nav-text">Lucene打分模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优缺点"><span class="nav-text">优缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#elasticsearch-5-lucene-6-的-bm25-算法"><span class="nav-text">Elasticsearch 5 (Lucene 6) 的 BM25 算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#评价指标lucece"><span class="nav-text">评价指标Lucece</span></a></li></ol></div>
             
 
           </div>
