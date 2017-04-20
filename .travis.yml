@@ -5,26 +5,17 @@ install:
 script:
   - hexo clean
   - hexo g
-script:
-  - git submodule update
-  - hexo clean && hexo g
-  - gulp default #使用 gulp 对流程进行优化
-
- after_script:
+after_script:
   - cd ./public
   - git init
   - git config user.name "peterxu"
   - git config user.email "peterxugo@gmail.com"
   - git add .
-  - git commit -m "Update docs"
+  - git commit -m "Update"
   - git push --force --quiet "https://${token}@${GH_REF}" master:master
-
-# E: Build LifeCycle
-
 branches:
   only:
-    - source_code
+    - master
 env:
  global:
    - GH_REF: github.com/peterxugo/peterxugo.github.io.git
-   #设置 GH_REF，注意更改 yourname
