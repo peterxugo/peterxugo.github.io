@@ -1,20 +1,11 @@
 language: node_js
 node_js: stable
-
-# S: Build Lifecycle
-before_install:
-- export TZ='Asia/Shanghai'
-- npm install -g hexo
-- npm install -g hexo-cli
-
 install:
   - npm install
-  
-before_script:
-  - npm install -g gulp
-
 script:
-  - git submodule init #用于更新主题, 更新源为自己的主题项目，否则会 clone 最新 NexT 主题，而官方主题配置文件没有设置
+  - hexo clean
+  - hexo g
+script:
   - git submodule update
   - hexo clean && hexo g
   - gulp default #使用 gulp 对流程进行优化
