@@ -15,7 +15,7 @@ after_script:
   - git push --force --quiet "https://${token}@${GH_REF}" master:master
 branches:
   only:
-    - master
+    - source_code
 env:
  global:
    - GH_REF: github.com/peterxugo/peterxugo.github.io.git
