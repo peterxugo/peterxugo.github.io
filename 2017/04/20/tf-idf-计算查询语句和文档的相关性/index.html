@@ -1,0 +1,768 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="翻译," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="1. 背景 1.1 搜索检索问题 在互联网中，用户越来越多的依赖通过搜索关键词来获得想要的相关内容，如何快速准确为用户提供相应的结果成为一个重要的课题 用户的搜索行为通常可以简化为从一个数据集合中查询一个子集的过程，举个栗子：首先限制数据集合为英文集合（主要是英文分词比较好办，中文等一些语言还需要设计到分词的算法），然后从这些英文集合中搜索一些英文文档，将问题简化一下就是计算“查询的英文文档”和全">
+<meta name="keywords" content="翻译">
+<meta property="og:type" content="article">
+<meta property="og:title" content="tf-idf 计算查询语句和文档的相关性">
+<meta property="og:url" content="http://yoursite.com/2017/04/20/tf-idf-计算查询语句和文档的相关性/index.html">
+<meta property="og:site_name" content="Peter's blog">
+<meta property="og:description" content="1. 背景 1.1 搜索检索问题 在互联网中，用户越来越多的依赖通过搜索关键词来获得想要的相关内容，如何快速准确为用户提供相应的结果成为一个重要的课题 用户的搜索行为通常可以简化为从一个数据集合中查询一个子集的过程，举个栗子：首先限制数据集合为英文集合（主要是英文分词比较好办，中文等一些语言还需要设计到分词的算法），然后从这些英文集合中搜索一些英文文档，将问题简化一下就是计算“查询的英文文档”和全">
+<meta property="og:updated_time" content="2017-04-20T09:25:23.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="tf-idf 计算查询语句和文档的相关性">
+<meta name="twitter:description" content="1. 背景 1.1 搜索检索问题 在互联网中，用户越来越多的依赖通过搜索关键词来获得想要的相关内容，如何快速准确为用户提供相应的结果成为一个重要的课题 用户的搜索行为通常可以简化为从一个数据集合中查询一个子集的过程，举个栗子：首先限制数据集合为英文集合（主要是英文分词比较好办，中文等一些语言还需要设计到分词的算法），然后从这些英文集合中搜索一些英文文档，将问题简化一下就是计算“查询的英文文档”和全">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/04/20/tf-idf-计算查询语句和文档的相关性/"/>
+
+
+
+
+
+  <title> tf-idf 计算查询语句和文档的相关性 | Peter's blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Peter's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/20/tf-idf-计算查询语句和文档的相关性/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Peter Xu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Peter's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                tf-idf 计算查询语句和文档的相关性
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-20T17:17:46+08:00">
+                2017-04-20
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2017-04-20T17:25:23+08:00">
+                2017-04-20
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/算法/" itemprop="url" rel="index">
+                    <span itemprop="name">算法</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="背景">1. 背景</h2>
+<h3 id="搜索检索问题">1.1 搜索检索问题</h3>
+<p>在互联网中，用户越来越多的依赖通过搜索关键词来获得想要的相关内容，如何快速准确为用户提供相应的结果成为一个重要的课题</p>
+<p>用户的搜索行为通常可以简化为从一个数据集合中查询一个子集的过程，举个栗子：首先限制数据集合为英文集合（主要是英文分词比较好办，中文等一些语言还需要设计到分词的算法），然后从这些英文集合中搜索一些英文文档，将问题简化一下就是计算“查询的英文文档”和全部的“英文数据集合”中各个文档的相关性</p>
+<p>接下来我们用更加具体化的方式来说明一下这个问题，首先我们有一个文档数据集合<span class="math inline">\(D\)</span>，用户的搜索语句为<span class="math inline">\(q=w_1,w_2,...,w_n\)</span>,其中<span class="math inline">\(w_i\)</span>代表具体的单词，接下来我们期望给用户返回一个数据<span class="math inline">\(D\)</span>的子集 <span class="math inline">\(D^*\)</span>，对于任何一个 <span class="math inline">\(d \in D^*\)</span>，最大化概率 <span class="math display">\[P(d|q,D)\]</span> 上面的思想是通过引入概率和统计的方式计算出具体的数值，同时还有一些基于向量的方案来优化检索的过程</p>
+<h3 id="ad-hoc检索算法">1.2 Ad-Hoc检索算法</h3>
+<p>在介绍TF—IDF算法之前我们先来探讨一些已有的模型，首先是如同上面提出的基于统计的最直接的方法，这种方法受欢迎并有效，比如（Berger &amp; Lafferty, 1999)提出检索时结合用户的偏好概率框架从而提高查询结果的匹配度的。该模型假设用户有一个确定需求信息<span class="math inline">\(G\)</span>，而这个需求信息可以近似的由一系列的单词组合<span class="math inline">\(q\)</span>代表，通过近似的将<span class="math inline">\(G\)</span>转换为<span class="math inline">\(q\)</span>并将贝叶斯公式带入公式（1）中，在给定语句<span class="math inline">\(q\)</span>的情况下返回合适的文档情景中该模型能够得到比较好的结果。</p>
+<p>利用基于向量的模型来处理检索问题也能够获得好的结果，(Berry, Dumais &amp; OíBrien, 1994)提出通过LSI（潜在语义检索）矩阵来处理查询检索，本质上，该算法是创建了一个降维过的向量空间来获得文档的<span class="math inline">\(n\)</span>维空间表达式。当查询的发生的时候通过计算查询向量和文档集合中的其他文档向量的余弦相似度，然后返回那些相似度比较大的文档。文章作者的实验结果显示该算法在查询检索中性能非常好，甚至能够应用在夸语言的文档查询检索(Littman &amp; Keim 1997)。如果某些条件得到满足（在特定的场景下），他们认为LSI能够扩展应用到2种语言以上。</p>
+<p>我们接下来我们要详细的测试的算法是词频逆词频（TF-IDF），这种基于权重的模式可以认为是统计方式的一种，尽管事实上他的结果是确定的。词频逆词频是一个相当古老的权重模式，简单有效的特点使得他在众多方法中更加受欢迎（Salton &amp; Buckley, 1988），在本文中我们通过the LDCís United Nations Parallel Text Corpus.英语文档集合来测试TF-IDF算法，探究该算法的优缺点作为未来算法的一个起点</p>
+<h2 id="tf-idf概述">2. TF-IDF概述</h2>
+<p>现在我们来看一下TF-IDF的结构和实现。首先我们将介绍算法的数学背景，并检查其相对于每个变量的行为。 然后提供实现的算法。</p>
+<h3 id="数学框架">2.1 数学框架</h3>
+<p>在进行之前，我们将对TF-IDF进行快速非正式的解释。本质上，TF-IDF通过确定特定文档中的单词的相对频率与该单词在整个文档语料库中的反比例相比较起作用。 直观地，该计算确定给定单词在特定文档中的相关性。 在一个单一或一小组文件中不常见的单词往往比普通单词（如冠词和介词）具有更高的TF-IDF值。不同的情景下实现的TF-IDF有一些微小不同的地方，但是总体上计算的方式如下。给定一个稳定集合<span class="math inline">\(D\)</span>，一个单词 <span class="math inline">\(w\)</span> 和一个文档 <span class="math inline">\(d \in D\)</span>,我们计算<span class="math display">\[\mathcal{W}_d=f_{w,d}*log(\frac{|D|}{f_{w,D}})\]</span>其中 <span class="math inline">\(f_{w,d}\)</span> 等于词 <span class="math inline">\(w\)</span> 在文档 <span class="math inline">\(d\)</span> 中出现的次数，<span class="math inline">\(|D|\)</span>是文档全集的大小, <span class="math inline">\(f_{w,D}\)</span> 是词 <span class="math inline">\(w\)</span> 在全集中出现的次数(Salton &amp; Buckley, 1988, Berger, et al, 2000)。根据<span class="math inline">\(f_{w,d}\)</span>，<span class="math inline">\(|D|\)</span>和<span class="math inline">\(f_{w,D}\)</span>，每个单词都会出现不同的情况，这些正是我们接下来主要测试的地方。 假设<span class="math inline">\(|D|\thicksim f_{w,d}\)</span>,即语料库的大小大接近于<span class="math inline">\(w\)</span>在集合<span class="math inline">\(D\)</span>的频率，对于一些非常小的常数<span class="math inline">\(c\)</span>，满足<span class="math inline">\(1 &lt; log(\frac{|D|}{f_{w,D}}) &lt; c\)</span>, 那么<span class="math inline">\(w\)</span>将会比<span class="math inline">\(f_{w,d}\)</span>小但是仍然是正的,这意味着<span class="math inline">\(w\)</span>在整个语料库中比较常见，但在整个<span class="math inline">\(D\)</span>句中仍然保持一定的重要性，例如TF-IDF在《新约》中的测试“Jesus”，就会是这种情况，与我们更加相关的例子在联合国文档的语料中“united”的结果可以预期到也是这种情况。对于非常常见的词语也是如此，例如冠词，代词和介词，它们本身在查询中没有任何相关的含义（除非用户明确要求含有这样的常用单词的文档）。 因此，这样的常用词得到非常低的TF-IDF分数，使得它们在搜索中基本上可以忽略不计。 最后，我们假设<span class="math inline">\(f_{w,d}\)</span>非常大，<span class="math inline">\(f_{w,D}\)</span>很小，那么<span class="math inline">\(log(\frac{|D|}{f_{w,D}})\)</span>将会变得相当大，所以<span class="math inline">\(w_d\)</span>同样会很大，这个使我们感兴趣的情况，因为具有高<span class="math inline">\(w_d\)</span>的词意味着<span class="math inline">\(w\)</span>是<span class="math inline">\(d\)</span>中的重要词，而在<span class="math inline">\(D\)</span>中不常见。这个词被认为具有很大的有辨识力的,所以当查询包含单词<span class="math inline">\(w\)</span>，返回的高<span class="math inline">\(w_d\)</span>文档<span class="math inline">\(d\)</span>很大可能满足用户。</p>
+<h3 id="为tf-idf编码">2.2 为TF-IDF编码</h3>
+<p>TF-IDF的代码很简单，给定一个由单词<span class="math inline">\(w_i\)</span>集合组合成的查询<span class="math inline">\(q\)</span>，对每个文档<span class="math inline">\(d\in D\)</span>，计算每个单词<span class="math inline">\(w_i\)</span>的<span class="math inline">\(w_{i,d}\)</span>。最简单的方法是通过遍历文档集合并求和<span class="math inline">\(f_{w,d}\)</span>和<span class="math inline">\(f_{w,D}\)</span>。一旦完成，我们可以很容易地根据前面提到的数学框架计算<span class="math inline">\(w_{i,d}\)</span>。 一旦找到所有<span class="math inline">\(w_{i,d}\)</span>，我们返回一个包含满足最大化以下等式文档 <span class="math inline">\(d\)</span> 的集合<span class="math inline">\(D^*\)</span>：<span class="math display">\[\sum_i{w_{i,d}}（3）\]</span>无论是用户还是系统都可以预先设定查询返回的文档集合<span class="math inline">\(D^*\)</span>的任意大小，并根据等式（3）以递减的顺序返回文档。 这是实现TF-IDF的传统方法。 我们将在后面的部分讨论该算法的扩展，以及根据我们自己的结果分析TF-IDF。</p>
+<h2 id="实验">3. 实验</h2>
+<h3 id="数据搜集和规则化">3.1 数据搜集和规则化</h3>
+<p>我们从《 LDC‘s United Nations Parallel Text Corpus》语料集合上搜集了1400文件，对TF-IDF进行测试，这些文件是从联合国1988年数据库的大量文件中任意收集的。这些文件是用SGML文本格式编码的，为了测试TF-IDF的鲁棒性，我们决定留下格式化标签导致的嘈杂的数据，并且强制区分大小写加大噪声。由于某些限制，我们不得不将用于执行信息检索的查询数量限制为86。我们根据计算公式3来计算这些查询的TF-IDF值，然后返回最大化（3）公式的前100个文档，这些文档根据权重的大小依次递减排序，为了对比我们的结果，我们同时测试暴力的方法（更加的朴素）</p>
+<h3 id="实验结果">3.2 实验结果</h3>
+<h2 id="结论">4. 结论</h2>
+<h2 id="参考文档">参考文档</h2>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/翻译/" rel="tag"># 翻译</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/20/Lucene-打分算法/" rel="next" title="Lucene 打分算法">
+                <i class="fa fa-chevron-left"></i> Lucene 打分算法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/20/hello-world/" rel="prev" title="Hello World">
+                Hello World <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Peter Xu" />
+          <p class="site-author-name" itemprop="name">Peter Xu</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景"><span class="nav-text">1. 背景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#搜索检索问题"><span class="nav-text">1.1 搜索检索问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ad-hoc检索算法"><span class="nav-text">1.2 Ad-Hoc检索算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tf-idf概述"><span class="nav-text">2. TF-IDF概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数学框架"><span class="nav-text">2.1 数学框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为tf-idf编码"><span class="nav-text">2.2 为TF-IDF编码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验"><span class="nav-text">3. 实验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据搜集和规则化"><span class="nav-text">3.1 数据搜集和规则化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验结果"><span class="nav-text">3.2 实验结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结论"><span class="nav-text">4. 结论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文档"><span class="nav-text">参考文档</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Peter Xu</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+</body>
+</html>
