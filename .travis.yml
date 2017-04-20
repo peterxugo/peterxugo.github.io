@@ -1,6 +1,8 @@
 language: node_js
 node_js: stable
+cache: apt
 install:
+  - sudo apt-get install pandoc
   - npm install
 script:
   - hexo clean
