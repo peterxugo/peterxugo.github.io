@@ -1,0 +1,38 @@
+---
+title: Apache NiFi--一个易于使用、功能强大而且可靠的数据处理和分发系统
+date: 2017-03-30 23:59:05
+tags: 笔记
+categories: apache nifi
+---
+
+## 1. 背景
+
+  ![](https://nifi.apache.org/assets/images/apache-nifi-logo.svg)
+  Apache NiFi是由美国过国家安全局(NSA)贡献给Apache基金会的开源项目，其设计目标是自动化系统间的数据流。2015年7月20日，Apache 基金会通过其博客宣布Apache NiFi顺利孵化完成称为Apache的顶级项目之一。NiFi初始的项目名称是Niagarafiles，当NiFi项目开源之后，一些早先在NSA的开发者们创立了初创公司Onyara，Onyara随之继续NiFi项目的开发并提供相关的支持。Hortonworks公司最近收购了Onyara并将其开发者整合到自己的团队中。
+
+## 2. nifi是什么
+
+   ![](https://nifi.apache.org/assets/images/flow-th.png)
+  Apache NiFi--一个易于使用、功能强大而且可靠的数据处理和分发系统。它支持强大且可高度配置的基于有向图的数据路由、转换和系统中介逻辑。Apache NiFi的一些高级功能和目标包括但不限于：
+    
+* 基于web的UI
+    * 设计，控制，反馈和监控之间的无缝体验
+* 高可配置
+    * 数据丢失容错vs保证交付
+    * 低延迟vs高吞吐量
+    * 动态优先级
+    * 流可以在运行时修改
+    * 背压(Back presure)
+* 数据血统
+    * 从始至终的追踪数据流（dataflow）
+* 为扩展而设计
+    * 构建自己的处理器和跟多
+    * 支持快速开发和有效测试
+* 安全
+    * 支持SSL,SSH,HTTPS加密内容，等等……
+    * 多租户授权和内部授权/策略管理 
+
+## 3. nifi vs kettle
+
+## 4. nifi vs Oozie/Falcon 
+
