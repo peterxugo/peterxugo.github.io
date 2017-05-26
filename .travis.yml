@@ -4,6 +4,7 @@ cache: apt
 install:
   - sudo apt-get install pandoc
   - npm install
+  - npm install hexo-cli
 script:
   - hexo clean
   - hexo g
