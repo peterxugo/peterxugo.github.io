@@ -3,8 +3,9 @@ node_js: stable
 cache: apt
 install:
   - sudo apt-get install pandoc
-  - npm install
-  - npm install hexo-cli
+  - npm install -g
+  - npm install hexo-cli -g
+  - npm install hexo-renderer-pandoc --save
 script:
   - hexo clean
   - hexo g
