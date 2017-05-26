@@ -58,13 +58,13 @@ categories: apache nifi
 
 NiFi的基本设计理念与基于流程编程的主要思想密切相关[fbp](http://en.wikipedia.org/wiki/Flow-based_programming#Concepts)。 以下是一些主要的NiFi概念，以及它们如何映射到FBP：
 
-|nifi名词|FBP名词|描述| 
-|-------------------|--------------------------|--------------------------------------------------------| 
+|nifi名词|FBP名词|描述|
+|-------------------|--------------------------|--------------------------------------------------------|
 |FlowFile|Information Packet|（流文件）FlowFile是系统间传输的对象，nifi会追踪每个Key/Value属性对，以及相关的内容字节流|
-|FlowFile Processor|Black Box|处理器负责执行操作，在EIP中，处理器可以实现数据路由的合并，变换，及系统间协调。处理器可以读取FlowFile的属性和流数据。处理器可以操作工作单元中多个FlowFile,也可以提交或还原提交的任务。| 
-|Connection|Bounded Buffer|连接器提供处理器之间的关联，它以队列的形式存在并允许控制各处理器之间的数据流动速度，队列可以动态的设定优先级，允许设定阈值（队列数量大小或者字节大小）来实现背压。| 
-|Flow Controller|Scheduler|流控制器维护处理器之间的连接关系，管理和分配所有处理器使用的线程。它用作促成处理器间流文件（FlowFiles）交换的代理| 
-|Process Group|subnet|处理器组是特定的处理器和连接器的集合。它能够通过输入端口（input）接收数据，通过输出端口（）发送数据。处理器组可以通过组合各种组件方式来构造新的组件。| 
+|FlowFile Processor|Black Box|处理器负责执行操作，在EIP中，处理器可以实现数据路由的合并，变换，及系统间协调。处理器可以读取FlowFile的属性和流数据。处理器可以操作工作单元中多个FlowFile,也可以提交或还原提交的任务。|
+|Connection|Bounded Buffer|连接器提供处理器之间的关联，它以队列的形式存在并允许控制各处理器之间的数据流动速度，队列可以动态的设定优先级，允许设定阈值（队列数量大小或者字节大小）来实现背压。|
+|Flow Controller|Scheduler|流控制器维护处理器之间的连接关系，管理和分配所有处理器使用的线程。它用作促成处理器间流文件（FlowFiles）交换的代理|
+|Process Group|subnet|处理器组是特定的处理器和连接器的集合。它能够通过输入端口（input）接收数据，通过输出端口（）发送数据。处理器组可以通过组合各种组件方式来构造新的组件。|
 
 这种设计设计和[seda](https://nifi.apache.org/docs/nifi-docs/html/overview.html#seda)相似，它为nifi成为一个建立强大和可扩展的数据流的高效平台带来许多的好处，这些好处包括但不限于：
 
