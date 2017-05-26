@@ -3,11 +3,11 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Peter's blog
+title: Hexo
 subtitle:
 description:
-author: Peter Xu
-language: zh-Hans
+author: John Doe
+language:
 timezone:
 
 # URL
@@ -63,12 +63,9 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: next
+theme: landscape
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-  type: git 
-  repo: git@github.com:peterxugo/peterxugo.github.io.git
-  branch: master
-
+  type:
