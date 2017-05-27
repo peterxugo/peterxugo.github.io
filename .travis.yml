@@ -1,10 +1,12 @@
 language: node_js
 node_js: stable
-cache: apt
+cache: 
+  - pandoc
+  - hexo-cli
+  - hexo-renderer-pandoc
 install:
   - sudo apt-get install pandoc
-  - npm install -g
-  - npm install hexo-cli -g
+  - npm install -g hexo-cli
   - npm install hexo-renderer-pandoc --save
 script:
   - hexo clean
