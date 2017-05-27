@@ -5,7 +5,8 @@ cache:
   - hexo-cli
   - hexo-renderer-pandoc
 install:
-  - wget ${pandoc}|dpkg -i
+  - wget ${pandoc}
+  - dpkg -i pandoc*.deb
   - npm install -g hexo-cli
   - npm install hexo-renderer-pandoc --save
 script:
