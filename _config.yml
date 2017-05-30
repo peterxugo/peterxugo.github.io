@@ -72,3 +72,10 @@ deploy:
   repo: git@github.com:peterxugo/peterxugo.github.io.git
   branch: master
 
+
+
+# 自动生成sitemap
+sitemap:
+  path: sitemap.xml
+baidusitemap:
+  path: baidusitemap.xml
