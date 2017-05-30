@@ -5,9 +5,11 @@ tags: 笔记
 categories: apache nifi
 ---
 
+ <img src="https://nifi.apache.org/assets/images/apache-nifi-logo.svg" width = "80%" height = "80%" alt="图片名称" align=center />
+
 ## 1. 背景
 
- <img src="https://nifi.apache.org/assets/images/apache-nifi-logo.svg" width = "80%" height = "80%" alt="图片名称" align=center />
+
 [Apache NiFi](https://nifi.apache.org/index.html)是由美国过国家安全局(NSA)贡献给Apache基金会的开源项目，其设计目标是自动化系统间的数据流。2015年7月20日，Apache 基金会通过其博客宣布Apache NiFi顺利孵化完成称为Apache的顶级项目之一。NiFi初始的项目名称是Niagarafiles，当NiFi项目开源之后，一些早先在NSA（美国国家安全局）的开发者们创立了初创公司Onyara，Onyara随之继续NiFi项目的开发并提供相关的支持。[Hortonworks](https://hortonworks.com/)公司最近收购了Onyara并将其开发者整合到自己的团队中。apache nifi 也成为了Hortonworks进军物联网的利器。
 
 ##2. nifi是什么
