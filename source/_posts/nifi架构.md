@@ -11,12 +11,15 @@ nifi是运行在jvm上的一个软件,NIFI的主要组成部分如下：
 ![](https://nifi.apache.org/docs/nifi-docs/html/images/zero-master-node.png)
 
 - **Web Server（网络服务）**
+
     Web Server的主要作用是提供网页服务和rest api
 
 - **Flow Controller（流控制器）**
+
     Flow Controller是NIIF操作的大脑。它为处理器（processor）提供线程执行任务，同时管理处理器的执行调度
     
 - **Extensions（Preocessor处理器）**
+
     NIFI中拥有众多的类型处理器，主要分为以下几类：
     - Data Transformation（数据转换）
     - Routing and Mediation（路由和调解）
@@ -30,12 +33,15 @@ nifi是运行在jvm上的一个软件,NIFI的主要组成部分如下：
     - Amazon Web Services（亚马逊网络服务）
 
 - **FlowFile Repository（流文件仓库）**
+
     FlowFlie仓库是NIFI 保持追踪流中flowfile的相关信息的地方，仓库的实现是可插拔的，默认的方法是位于一个指定的磁盘分区持久写式日志。 Write-Ahead Log方法
 
 - **Content Repository（内容仓库）**
+
     内容仓库是存储FlowFile的实际内容的地方。仓库的实现是可插拔的。默认的方法是相当简单的机制-直接在文件系统中存储数据块。可以指定多个系统存储地址从而获得不同的物理分区优化单个文件卷的IO性能问题
  
 - **Provenance Repository（源谱仓库）**
+
     Provenance Repository是所有源谱事件数据的存储位置。该库的构建是可插拔使用，默认的实现是使用一个或多个物理磁盘卷。在每个位置的事件数据进行索引和搜索。
 
 
