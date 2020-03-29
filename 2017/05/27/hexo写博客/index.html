@@ -1,0 +1,826 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="笔记," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="1.背景 自己在不断的学习，需要一个地方来记录，写博客也是能够对已经学过的东西进行一次系统的梳理，有利于对知识的巩固。但是博客就要考虑写和放的问题，写-自然就选择用markdown了，主要考虑它是一个轻格式的，能够支持绝大部分的html格式，这也是现在写博客的主流。放选择了GitHub Page，主要是不用钱，还可以顺道学习一下git相关的知识。 2.hexo是什么 hexo是基于Node.js的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hexo写博客">
+<meta property="og:url" content="https://peterxugo.github.io/2017/05/27/hexo%E5%86%99%E5%8D%9A%E5%AE%A2/index.html">
+<meta property="og:site_name" content="Peter&#39;s blog">
+<meta property="og:description" content="1.背景 自己在不断的学习，需要一个地方来记录，写博客也是能够对已经学过的东西进行一次系统的梳理，有利于对知识的巩固。但是博客就要考虑写和放的问题，写-自然就选择用markdown了，主要考虑它是一个轻格式的，能够支持绝大部分的html格式，这也是现在写博客的主流。放选择了GitHub Page，主要是不用钱，还可以顺道学习一下git相关的知识。 2.hexo是什么 hexo是基于Node.js的">
+<meta property="og:image" content="https://peterxugo.github.io/images/2017-05-30-11-38-30.jpg">
+<meta property="og:image" content="https://peterxugo.github.io/images/2017-05-30-11-30-06.jpg">
+<meta property="og:image" content="https://peterxugo.github.io/images/2017-05-30-12-05-17.jpg">
+<meta property="og:image" content="https://peterxugo.github.io/images/2017-05-30-12-16-17.jpg">
+<meta property="og:image" content="https://peterxugo.github.io/images/2017-05-30-12-16-55.jpg">
+<meta property="og:image" content="https://peterxugo.github.io/images/2017-05-30-12-17-43.jpg">
+<meta property="article:published_time" content="2017-05-27T17:05:47.000Z">
+<meta property="article:modified_time" content="2020-03-29T04:38:07.807Z">
+<meta property="article:author" content="Peter Xu">
+<meta property="article:tag" content="笔记">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://peterxugo.github.io/images/2017-05-30-11-38-30.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://peterxugo.github.io/2017/05/27/hexo写博客/"/>
+
+
+
+
+
+  <title> hexo写博客 | Peter's blog </title>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Peter's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://peterxugo.github.io/2017/05/27/hexo%E5%86%99%E5%8D%9A%E5%AE%A2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Peter Xu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Peter's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                hexo写博客
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-27T17:05:47+00:00">
+                2017-05-27
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2020-03-29T04:38:07+00:00">
+                2020-03-29
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hexo/" itemprop="url" rel="index">
+                    <span itemprop="name">hexo</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="背景">1.背景</h2>
+<p>自己在不断的学习，需要一个地方来记录，写博客也是能够对已经学过的东西进行一次系统的梳理，有利于对知识的巩固。但是博客就要考虑写和放的问题，写-自然就选择用<a href="http://wowubuntu.com/markdown/" target="_blank" rel="noopener">markdown</a>了，主要考虑它是一个轻格式的，能够支持绝大部分的html格式，这也是现在写博客的主流。放选择了<a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Page</a>，主要是不用钱，还可以顺道学习一下git相关的知识。</p>
+<h2 id="hexo是什么">2.hexo是什么</h2>
+<p><a href="https://github.com/hexojs/hexo/stargazers" target="_blank" rel="noopener">hexo</a>是基于Node.js的快速、简洁且高效的博客框架，能够快速的对markdown文件渲染为html，支持一键部署到GitHub Page，有着丰富的插件。hexo官方文档十分详实，从如何安装到文章发布，从切换主题到嵌入第三方服务，这里只做简单的摘抄，详细的过程还是需要参考<a href="https://hexo.io/zh-cn/docs/" target="_blank" rel="noopener">文档</a></p>
+<p>首先，hexo的使用需要一些基本软件的支持，分别是<a href="https://github.com/nodejs/node" target="_blank" rel="noopener">node</a>和git。 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">brew install nvm ##安装Node.js版本管理的工具nvm</span><br><span class="line">nvm install stable ##安装最新稳定版本的node</span><br><span class="line">brew install git ##安装git，目前世界上最先进的分布式版本控制系统</span><br></pre></td></tr></table></figure></p>
+<p>hexo的安装部署很方便：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g ## 1.全局安装hexo</span><br><span class="line">hexo init blog ##2.初始化博客文件夹</span><br><span class="line">cd blog ##3.切换到博客文件夹</span><br><span class="line">npm install ##4.安装hexo的依赖包</span><br><span class="line">hexo server ##5.开启hexo本地网站服务</span><br></pre></td></tr></table></figure>
+<p>初始化的博客目录结构如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── _config.yml</span><br><span class="line">├── package.json</span><br><span class="line">├── scaffolds</span><br><span class="line">├── source</span><br><span class="line">|   ├── _drafts</span><br><span class="line">|   └── _posts</span><br><span class="line">└── themes</span><br></pre></td></tr></table></figure>
+<h2 id="pandoc-解决数学符号">3.pandoc-解决数学符号</h2>
+<p><a href="https://www.mathjax.org/" target="_blank" rel="noopener">Mathjax</a>可以解析网页上的数学公式，与hexo的结合也很简单，但是由hexo默认使用<a href="https://github.com/chjj/marked" target="_blank" rel="noopener">marked.js</a>去解析我们写的markdown，Markdwon本身的特殊符号与Latex中的符号会出现冲突（其实很多其他的markdown引擎不会存在这些问题），比如一些符号，_代表斜体，会被处理为&lt;em&gt;标签，比如x_i在开始被渲染的时候，处理为x&lt;em&gt;i&lt;/em&gt;，这个时候mathjax就无法渲染成下标了。解决marked.js引擎带来的渲染公式问题的方法主要是以下三种：</p>
+<ul>
+<li>手动escape</li>
+<li><a href="https://liam0205.me/2015/09/09/fix-conflict-between-mathjax-and-markdown/" target="_blank" rel="noopener">保护代码块</a></li>
+<li><a href="http://blog.csdn.net/emptyset110/article/details/50123231" target="_blank" rel="noopener">修改Hexo渲染源码</a></li>
+</ul>
+<p>但是这些方法或多或少的都存在着一些问题，首先，手动escape需要对公式涉及到的每一个markdown关键词转义，例如：<code>\$$f\_i = f\_{i + 1}\$$</code>这样每一个关键词都要转义实在是太繁琐了，通用性很差,比如想迁移到其它地方，就无法识别了，因为大部分的markdown引擎是没有这个问题的。</p>
+<p>其次是保护代码块的方法，markdown中的两个`之间的东西不会转义例如这样<code>\$f_i = f_{i + 1}\$</code>，但是这样一来所有的公式的样式都是以code的形式来展现的，这个方法还有个问题，就是有时候我们的代码中会有$$的出现，这时候，仍然使用mathjax就有可能出现无法预料的结果了。</p>
+<p>最后的修改hexo的渲染源码太过于激进，而且不实用，且先不说无法保证所有字符能够正确的转义，而且有可能会丢失原来markdown的关键字语法，修改代码会带来不可预料的bug，日后的升级维护也会带来很多麻烦。</p>
+<p>说到底，数学公式的问题都是marked.js引擎导致的，那么为什么不直接换掉引擎呢，于是找到了<a href="http://pandoc.org/" target="_blank" rel="noopener">Pandoc</a>的这个好东西。Pandoc是由John MacFarlane开发的标记语言转换工具，可实现不同标记语言间的格式转换，堪称该领域中的“瑞士军刀”，Pandoc的语法完全没有上述问题。使用Pandoc解析器只需要2步。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew install pandoc ##安装pandoc软件</span><br><span class="line">npm install hexo-renderer-pandoc ## 安装hexo的pandoc解析器</span><br></pre></td></tr></table></figure>
+<p>只需要2个命令，所有问题就都解决。有人会说pandoc太重了，是一个核弹级武器，用来解决数学符号问题引用一个这么大的软件实在是杀鸡用牛刀，但是“Life is short, you need Python”。</p>
+<h2 id="ci-自动构建">4.CI-自动构建</h2>
+<p>hexo支持一键发布到GItHub Page和<a href="https://www.heroku.com/" target="_blank" rel="noopener">HeroKu</a>等平台。具体参考官方文档中的<a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">deployment章节</a>，一般博主都是先本地搭建好hexo的环境，然后编写文章，最后使用hexo deploy来发布文章。</p>
+<p>但是，这样的使用方法有时会带来一些不便。首先，如果我想在另外一台设备上面写博客，必须将整个项目拷贝过来，完成之后要保持两台设备的内容是一致的，不然就会导致部署之后有不同的地方。在这种情况下一般会将整个项目都托管到 github 上面。但是这又会导致另外一个问题，每次有改动的时候不但要部署博客，还要提交项目的代码，这又增加了操作的步骤。</p>
+<p>那么有什么办法来优雅的解决这个问题呢？毕竟我只想安安静静的写个博客啊！是时候该让<a href="https://travis-ci.org/" target="_blank" rel="noopener">Travis CI</a>上场了！顾名思义，Travis CI 是一个持续集成(Continuous integration，简称CI)的工具。它可以在公共的 Github 仓库上免费使用。核心思想是使用一个GitHub Page分支来管理所有博客的源代码，然后由CI编译发布到master主分支。</p>
+<p>Travis CI的持续集成非常的方便，尤其他对Github是无缝支持，只需要简单的三步：</p>
+<ol style="list-style-type: decimal">
+<li>开启CI</li>
+<li>编写 .travis.yml</li>
+<li>触发</li>
+</ol>
+<p>首先使用GitHub账号登入在Travis CI，并在Travis中开启GItHub Page的持续集成，如下图</p>
+<div class="figure">
+<img src="/images/2017-05-30-11-38-30.jpg" />
+
+</div>
+<div class="figure">
+<img src="/images/2017-05-30-11-30-06.jpg" />
+
+</div>
+<p>然后设定自动构建过程的配置文件，在本地的blog的git库的顶级目录中新加文件.travis.yml，并添加以下内容： <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">language:</span> <span class="string">node_js</span></span><br><span class="line"><span class="attr">node_js:</span> <span class="string">stable</span></span><br><span class="line"><span class="attr">cache:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">pandoc</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">hexo-cli</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">hexo-renderer-pandoc</span></span><br><span class="line"><span class="attr">install:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">wget</span> <span class="string">$&#123;pandoc&#125;</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">sudo</span> <span class="string">dpkg</span> <span class="string">-i</span> <span class="string">pandoc*.deb</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">npm</span> <span class="string">install</span> <span class="string">-g</span> <span class="string">hexo-cli</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">npm</span> <span class="string">install</span> <span class="string">hexo-renderer-pandoc</span> <span class="string">--save</span></span><br><span class="line"><span class="attr">script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">hexo</span> <span class="string">clean</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">hexo</span> <span class="string">g</span></span><br><span class="line"><span class="attr">after_script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">cd</span> <span class="string">./public</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">git</span> <span class="string">init</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">git</span> <span class="string">config</span> <span class="string">user.name</span> <span class="string">"peterxu"</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">git</span> <span class="string">config</span> <span class="string">user.email</span> <span class="string">"peterxugo@gmail.com"</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">git</span> <span class="string">add</span> <span class="string">.</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">git</span> <span class="string">commit</span> <span class="string">-m</span> <span class="string">"Update"</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">git</span> <span class="string">push</span> <span class="string">--force</span> <span class="string">--quiet</span> <span class="string">"https://$&#123;token&#125;@$&#123;GH_REF&#125;"</span> <span class="string">master:master</span></span><br><span class="line"><span class="attr">branches:</span></span><br><span class="line">  <span class="attr">only:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">source_code</span></span><br><span class="line"><span class="attr">env:</span></span><br><span class="line"> <span class="attr">global:</span></span><br><span class="line">   <span class="bullet">-</span> <span class="attr">GH_REF:</span> <span class="string">github.com/peterxugo/peterxugo.github.io.git</span></span><br></pre></td></tr></table></figure></p>
+<p>配置文件中的<code>${pandoc}</code>是pandoc的下载地址，配置在CI的变量中，后面会具体讲如何设置该变量，同样的<code>${token},${GH_REF}</code>同理。<code>after_script</code>中的<code>user.name</code>，<code>user.email</code>，需要改成你自己的git用户名和邮箱，global中的<code>- GH_REF: github.com/peterxugo/peterxugo.github.io.git</code>需要换成自己的仓库地址。</p>
+<p>重点说明一下CI中安装pandoc，Ubuntu可以直接使用<code>sudo apt-get install pandoc</code>，但是这样安装在版本是1.19.1.X(2017-05-30)，我发现这个版本的Pandoc在解析table的时候存在一些问题，不能够正确的解析出一些表格。</p>
+<p>这个问题的发现过程如下：我本地mac使用hexo预览文章能够看到表格被正常渲染，但是CI构建后一直无法正常的显示表格，检查html代码发现没有正常的渲染为table，首先想到的是hexo版本问题，通过保证本地和CI环境中的Hexo及相关的软件的版本一致，但是问题依旧没有得到解决。最后猜想到可能是Pandoc的问题，于是查看构建的过程发现本地是Pandoc是pandoc 1.19.2.1,而CI上面apt库安装的版本是1.19.1.X，更新Pandoc版本后表格问题解决。</p>
+<p>由于我们需要将构建后的代码push到master分支上面，于是我们需要给CI相关的GItHub权限。我们可以通过GItHub提供的 Personal access token方法，将Token传给CI从而使得CI能够push代码。如下图先在GItHub中新增加一个 Personal access token，<strong>一定要记得复制生成的Token，不然就永远看不见这个Token</strong></p>
+<div class="figure">
+<img src="/images/2017-05-30-12-05-17.jpg" />
+
+</div>
+<p>登入到CI网站，对仓库进行相关的配置，先选中需要持续集成的仓库，这里是peterxugo/peterxugo.github.io,选中setting，然后开启相应的配置，最后在环境变量中加入刚才在GItHub中生产的token，变量可以在配置文件中用{}引用，pandoc的最新版本下载地址为<a href="https://github.com/jgm/pandoc/releases/download/1.19.2.1/pandoc-1.19.2.1-1-amd64.deb" target="_blank" rel="noopener">Ubuntu pandoc 最新版本</a></p>
+<div class="figure">
+<img src="/images/2017-05-30-12-16-17.jpg" />
+
+</div>
+<div class="figure">
+<img src="/images/2017-05-30-12-16-55.jpg" />
+
+</div>
+<div class="figure">
+<img src="/images/2017-05-30-12-17-43.jpg" />
+
+</div>
+<p>最后，我们在本地代码中新建分支source_code，在该分支下执行提交代码</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git add . -A</span><br><span class="line">git commit -m "test CI"</span><br><span class="line">git push</span><br></pre></td></tr></table></figure>
+<p>一切配置正常的话，我们就可以看到CI中在构建博客的过程了，CI构建完成后就可以看到GitPage中的博客文章了。</p>
+<h2 id="参考">5.参考</h2>
+<ol style="list-style-type: decimal">
+<li><a href="https://segmentfault.com/a/1190000004667156" target="_blank" rel="noopener">用 Travis CI 自动部署 hexo</a></li>
+<li><a href="http://shomy.top/2016/10/22/hexo-markdown-mathjax/" target="_blank" rel="noopener">Hexo下mathjax的转义问题</a></li>
+<li><a href="https://hexo.io/docs/" target="_blank" rel="noopener">hexo doc</a> 构建的到时候遇到的pandoc版本导致无法解析table问题</li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E7%AC%94%E8%AE%B0/" rel="tag"># 笔记</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/20/Lucene-%E6%89%93%E5%88%86%E7%AE%97%E6%B3%95/" rel="next" title="Lucene 打分算法">
+                <i class="fa fa-chevron-left"></i> Lucene 打分算法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/06/nifi%E6%9E%B6%E6%9E%84/" rel="prev" title="nifi架构">
+                nifi架构 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Peter Xu" />
+          <p class="site-author-name" itemprop="name">Peter Xu</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景"><span class="nav-text">1.背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hexo是什么"><span class="nav-text">2.hexo是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pandoc-解决数学符号"><span class="nav-text">3.pandoc-解决数学符号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ci-自动构建"><span class="nav-text">4.CI-自动构建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-text">5.参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Peter Xu</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next" target="_blank" rel="noopener">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+</body>
+</html>

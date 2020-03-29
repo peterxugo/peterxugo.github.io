@@ -1,0 +1,850 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="笔记," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="1. 背景 Apache NiFi是由美国过国家安全局(NSA)贡献给Apache基金会的开源项目，其设计目标是自动化系统间的数据流。2015年7月20日，Apache 基金会通过其博客宣布Apache NiFi顺利孵化完成称为Apache的顶级项目之一。NiFi初始的项目名称是Niagarafiles，当NiFi项目开源之后，一些早先在NSA（美国国家安全局）的开发者们创立了初创公司Onyar">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Apache NiFi简介">
+<meta property="og:url" content="https://peterxugo.github.io/2017/03/30/nifi-%E7%AE%80%E4%BB%8B/index.html">
+<meta property="og:site_name" content="Peter&#39;s blog">
+<meta property="og:description" content="1. 背景 Apache NiFi是由美国过国家安全局(NSA)贡献给Apache基金会的开源项目，其设计目标是自动化系统间的数据流。2015年7月20日，Apache 基金会通过其博客宣布Apache NiFi顺利孵化完成称为Apache的顶级项目之一。NiFi初始的项目名称是Niagarafiles，当NiFi项目开源之后，一些早先在NSA（美国国家安全局）的开发者们创立了初创公司Onyar">
+<meta property="og:image" content="https://nifi.apache.org/assets/images/apache-nifi-logo.svg">
+<meta property="og:image" content="https://nifi.apache.org/assets/images/flow-th.png">
+<meta property="article:published_time" content="2017-03-30T23:59:05.000Z">
+<meta property="article:modified_time" content="2020-03-29T04:38:07.807Z">
+<meta property="article:author" content="Peter Xu">
+<meta property="article:tag" content="笔记">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://nifi.apache.org/assets/images/apache-nifi-logo.svg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://peterxugo.github.io/2017/03/30/nifi-简介/"/>
+
+
+
+
+
+  <title> Apache NiFi简介 | Peter's blog </title>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Peter's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://peterxugo.github.io/2017/03/30/nifi-%E7%AE%80%E4%BB%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Peter Xu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Peter's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Apache NiFi简介
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-30T23:59:05+00:00">
+                2017-03-30
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2020-03-29T04:38:07+00:00">
+                2020-03-29
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/apache-nifi/" itemprop="url" rel="index">
+                    <span itemprop="name">apache nifi</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="https://nifi.apache.org/assets/images/apache-nifi-logo.svg" width = "80%" height = "80%" alt="图片名称" align=center /></p>
+<h2 id="背景">1. 背景</h2>
+<p><a href="https://nifi.apache.org/index.html" target="_blank" rel="noopener">Apache NiFi</a>是由美国过国家安全局(NSA)贡献给Apache基金会的开源项目，其设计目标是自动化系统间的数据流。2015年7月20日，Apache 基金会通过其博客宣布Apache NiFi顺利孵化完成称为Apache的顶级项目之一。NiFi初始的项目名称是Niagarafiles，当NiFi项目开源之后，一些早先在NSA（美国国家安全局）的开发者们创立了初创公司Onyara，Onyara随之继续NiFi项目的开发并提供相关的支持。<a href="https://hortonworks.com/" target="_blank" rel="noopener">Hortonworks</a>公司最近收购了Onyara并将其开发者整合到自己的团队中。apache nifi 也成为了Hortonworks进军物联网的利器。</p>
+<h2 id="nifi是什么">2. nifi是什么</h2>
+<p>简单的来说nifi的建立是为了使各个系统之间的”数据流“自动化，“数据流”这个词代表着多种含义，这里提到的数据流特指自动化和可管理的信息流。自从企业中出现多个系统之后，要面临的首要任务是解决数据生产系统与数据处理系统之间的数据处理流。自从这个问题面世以来，人们已经广泛的探讨了解决方案，其中<a href="http://www.enterpriseintegrationpatterns.com/" target="_blank" rel="noopener">《Enterprise Integration Patterns》</a>一书提出一个全面可行的消息消费方式。 对于数据流来说主要面临以下几个大方面的挑战：</p>
+<ul>
+<li><strong>系统故障（System fail）</strong> 包括但不限于：网络故障，硬盘故障，软件崩溃，人为失误</li>
+<li><strong>数据处理瓶颈</strong> 有时，数据源头产生数据的速度远远超过数据处理和数据传输的速度，此时整个系统有一个很严重的瓶颈。</li>
+<li><strong>异常数据处理</strong> 您将始终收到太大，太小，太快，太慢，损坏，错误或格式错误的数据。</li>
+<li><strong>业务快速演进</strong> 快速数据处理业务的调整，新业务流程和原有业务升级改造</li>
+<li><strong>多系统升级不同步引入的前后兼容</strong> 原有系统的协议和数据格式，会伴随系统的升级有一定的调整，同时单个系统的升级会影响周边系统。数据流可以把多个大型分布式系统串边在一起，这些系统可以是松散地，甚至设计之初就没考虑未来地集成</li>
+<li><strong>兼容性和安全性</strong> 法律法规的变更，规章制度的变动，以及政策调整，业务合同的变更。系统和系统之间，系统和用户接口之间要安全，可信和权责分明。</li>
+<li><strong>生产环境平滑升级</strong> 在实验验证环境很难复制生产环境</li>
+</ul>
+<p>多年以来，数据流已经成为一种架构中必不可少的恶性循环之一。 现在虽然有一些积极和快速发展的运动，使得数据流更有趣，对于给定企业的成功更为重要。 这些包括像 面向服务的架构<a href="http://en.wikipedia.org/wiki/Service-oriented_architecture%5D，API%20%5Bapi%5D%5Bhttp://www.forbes.com/sites/ciocentral/2012/08/29/welcome-to-the-api-economy/" target="_blank" rel="noopener">soa</a> <a href="http://thenextweb.com/dd/2014/03/28/api-economy/" target="_blank" rel="noopener">api2</a>，物联网<a href="http://en.wikipedia.org/wiki/Internet_of_Things" target="_blank" rel="noopener">iot</a>以及Big Data <a href="http://en.wikipedia.org/wiki/Big_data" target="_blank" rel="noopener">bigdata</a>的兴起。 此外，合规性，隐私性和安全性所需的严谨程度不断增加。 即使仍然存在所有这些新概念，数据流的模式和需求仍然基本相同。 主要的区别在于复杂性的范围，适应需要的变化率，以及边缘情况在一般情况下是常见的情况。 NiFi旨在帮助解决这些现代数据流挑战。</p>
+<h2 id="nifi特点">3. nifi特点</h2>
+<p><img src="https://nifi.apache.org/assets/images/flow-th.png" /> Apache NiFi–一个易于使用、功能强大而且可靠的数据处理和分发系统。它支持强大且可高度配置的基于有向图的数据路由、转换和系统中介逻辑。Apache NiFi的一些高级功能和目标包括但不限于：</p>
+<ul>
+<li>基于web的UI
+<ul>
+<li>设计，控制，反馈和监控之间的无缝体验</li>
+</ul></li>
+<li>高可配置
+<ul>
+<li>数据丢失容错vs保证交付</li>
+<li>低延迟vs高吞吐量</li>
+<li>动态优先级</li>
+<li>流可以在运行时修改</li>
+<li>背压(Back presure)</li>
+</ul></li>
+<li>数据血统
+<ul>
+<li>从始至终的追踪数据流（dataflow）</li>
+</ul></li>
+<li>为扩展而设计
+<ul>
+<li>构建自己的处理器和跟多</li>
+<li>支持快速开发和有效测试</li>
+</ul></li>
+<li>安全
+<ul>
+<li>支持SSL,SSH,HTTPS加密内容，等等……</li>
+<li>多租户授权和内部授权/策略管理</li>
+</ul></li>
+</ul>
+<h2 id="nifi的核心概念">4. nifi的核心概念</h2>
+<p>NiFi的基本设计理念与基于流程编程的主要思想密切相关<a href="http://en.wikipedia.org/wiki/Flow-based_programming#Concepts" target="_blank" rel="noopener">fbp</a>。 以下是一些主要的NiFi概念，以及它们如何映射到FBP：</p>
+<table>
+<colgroup>
+<col width="19%" />
+<col width="25%" />
+<col width="54%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>nifi名词</th>
+<th>FBP名词</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>FlowFile</td>
+<td>Information Packet</td>
+<td>（流文件）FlowFile是系统间传输的对象，nifi会追踪每个Key/Value属性对，以及相关的内容字节流</td>
+</tr>
+<tr class="even">
+<td>FlowFile Processor</td>
+<td>Black Box</td>
+<td>处理器负责执行操作，在EIP中，处理器可以实现数据路由的合并，变换，及系统间协调。处理器可以读取FlowFile的属性和流数据。处理器可以操作工作单元中多个FlowFile,也可以提交或还原提交的任务。</td>
+</tr>
+<tr class="odd">
+<td>Connection</td>
+<td>Bounded Buffer</td>
+<td>连接器提供处理器之间的关联，它以队列的形式存在并允许控制各处理器之间的数据流动速度，队列可以动态的设定优先级，允许设定阈值（队列数量大小或者字节大小）来实现背压。</td>
+</tr>
+<tr class="even">
+<td>Flow Controller</td>
+<td>Scheduler</td>
+<td>流控制器维护处理器之间的连接关系，管理和分配所有处理器使用的线程。它用作促成处理器间流文件（FlowFiles）交换的代理</td>
+</tr>
+<tr class="odd">
+<td>Process Group</td>
+<td>subnet</td>
+<td>处理器组是特定的处理器和连接器的集合。它能够通过输入端口（input）接收数据，通过输出端口（）发送数据。处理器组可以通过组合各种组件方式来构造新的组件。</td>
+</tr>
+</tbody>
+</table>
+<p>这种设计设计和<a href="https://nifi.apache.org/docs/nifi-docs/html/overview.html#seda" target="_blank" rel="noopener">seda</a>相似，它为nifi成为一个建立强大和可扩展的数据流的高效平台带来许多的好处，这些好处包括但不限于：</p>
+<ul>
+<li>可视化的创建和管理处理器之间的有向图</li>
+<li>本质上是异步的，也能够支持高吞吐量，即便在处理（processing）和流量波动情况下做到自然缓存</li>
+<li>提供高并发框架，使开发人员无需担心高并发的复杂性</li>
+<li>促进内聚和松散耦合的组件的开发，从而可在不同环境中复用和做单元测试</li>
+<li>资源受限的连接产生了重要的功能，比如非常自然和直观的背压和释压</li>
+<li>错误的处理变得和基本过程（happy path）一样自然，而不是粗粒度的捕获全部的错误</li>
+<li>数据在系统的进出的点以及流动过程能够一目了然，并且非常容易跟踪。</li>
+</ul>
+<h2 id="参考">5. 参考</h2>
+<ol style="list-style-type: decimal">
+<li>) <a href="http://blog.csdn.net/hopeatme/article/details/50815448" target="_blank" rel="noopener">hopeatme的csdn博客</a></li>
+<li>) <a href="http://www.infoq.com/cn/news/2015/10/hortonworks-ioat-dataflow-nifi" target="_blank" rel="noopener">Hortonworks进军物联网，发布基于Apache NiFi项目的DataFlow产品</a></li>
+<li>) <a href="https://nifi.apache.org/docs.html" target="_blank" rel="noopener">nifi doc</a></li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E7%AC%94%E8%AE%B0/" rel="tag"># 笔记</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/20/tf-idf-%E8%AE%A1%E7%AE%97%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5%E5%92%8C%E6%96%87%E6%A1%A3%E7%9A%84%E7%9B%B8%E5%85%B3%E6%80%A7/" rel="prev" title="tf-idf 计算查询语句和文档的相关性">
+                tf-idf 计算查询语句和文档的相关性 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Peter Xu" />
+          <p class="site-author-name" itemprop="name">Peter Xu</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景"><span class="nav-text">1. 背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nifi是什么"><span class="nav-text">2. nifi是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nifi特点"><span class="nav-text">3. nifi特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nifi的核心概念"><span class="nav-text">4. nifi的核心概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-text">5. 参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Peter Xu</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next" target="_blank" rel="noopener">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+</body>
+</html>

@@ -1,0 +1,853 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="pilosa," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="数据模型 概观 Pilosa数据模型核心就是布尔矩阵，矩阵中的每个单元是一个位（计算机存储最小单位），每一个bit代表着行和列之间存在关系（通常是是或者否） 任何的实体都可以成为行和列，行和列也可以是同样的实体比如bigraph。Pilosa可以将任意键&#x2F;值对（称为属性）与行和列相关联，但查询和存储在围绕矩阵核心进行优化。 Pilosa lays out data first in rows, s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pilosa-data-mode">
+<meta property="og:url" content="https://peterxugo.github.io/2019/02/02/pilosa-data-mode/index.html">
+<meta property="og:site_name" content="Peter&#39;s blog">
+<meta property="og:description" content="数据模型 概观 Pilosa数据模型核心就是布尔矩阵，矩阵中的每个单元是一个位（计算机存储最小单位），每一个bit代表着行和列之间存在关系（通常是是或者否） 任何的实体都可以成为行和列，行和列也可以是同样的实体比如bigraph。Pilosa可以将任意键&#x2F;值对（称为属性）与行和列相关联，但查询和存储在围绕矩阵核心进行优化。 Pilosa lays out data first in rows, s">
+<meta property="og:image" content="https://peterxugo.github.io/img/docs/data-model.png">
+<meta property="og:image" content="https://peterxugo.github.io/img/docs/field-ranked.png">
+<meta property="og:image" content="https://peterxugo.github.io/img/docs/field-lru.png">
+<meta property="og:image" content="https://peterxugo.github.io/img/docs/field-bsi.png">
+<meta property="og:image" content="https://peterxugo.github.io/img/docs/field-time-quantum.png">
+<meta property="article:published_time" content="2019-02-02T11:35:02.000Z">
+<meta property="article:modified_time" content="2020-03-29T04:38:07.807Z">
+<meta property="article:author" content="Peter Xu">
+<meta property="article:tag" content="pilosa">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://peterxugo.github.io/img/docs/data-model.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://peterxugo.github.io/2019/02/02/pilosa-data-mode/"/>
+
+
+
+
+
+  <title> pilosa-data-mode | Peter's blog </title>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Peter's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://peterxugo.github.io/2019/02/02/pilosa-data-mode/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Peter Xu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Peter's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                pilosa-data-mode
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-02T11:35:02+00:00">
+                2019-02-02
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2020-03-29T04:38:07+00:00">
+                2020-03-29
+              </time>
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="数据模型">数据模型</h2>
+<h3 id="概观">概观</h3>
+<p>Pilosa数据模型核心就是布尔矩阵，矩阵中的每个单元是一个位（计算机存储最小单位），每一个bit代表着行和列之间存在关系（通常是是或者否）</p>
+<p>任何的实体都可以成为行和列，行和列也可以是同样的实体比如<a href="https://en.wikipedia.org/wiki/Bigraph" target="_blank" rel="noopener">bigraph</a>。Pilosa可以将任意键/值对（称为属性）与行和列相关联，但查询和存储在围绕矩阵核心进行优化。</p>
+<p>Pilosa lays out data first in rows, so queries which get all the set bits in one or many rows, or compute a combining operation—such as Intersect or Union—on multiple rows, are the fastest. Pilosa categorizes rows into different <em>fields</em> and quickly retrieves the top rows in a field sorted by the number of columns set in each row.</p>
+<p>Please note that Pilosa is most performant when row and column IDs are sequential starting from 0. You can deviate from this to some degree, but setting a bit with column ID 2<sup>63</sup> on a single-node cluster, for example, will not work well due to memory limitations.</p>
+<p><img src="/img/docs/data-model.png" alt="basic data model diagram" /> <em>Basic data model diagram</em></p>
+<h3 id="index">Index</h3>
+<p>The purpose of the Index is to represent a data namespace. You cannot perform cross-index queries.</p>
+<h3 id="column">Column</h3>
+<p>Column ids are sequential, increasing integers and they are common to all Fields within an Index. A single column often corresponds to a record in a relational table, although other configurations are possible, and sometimes preferable.</p>
+<h3 id="row">Row</h3>
+<p>Row ids are sequential, increasing integers namespaced to each Field within an Index.</p>
+<h3 id="field">Field</h3>
+<p>Fields are used to segment rows within an index, for example to define different functional groups. A Pilosa field might correspond to a single field in a relational table, where each row in a standard Pilosa field represents a single possible value of the relational field. Similarly, an integer field could represent all possible integer values of a relational field.</p>
+<h4 id="relational-analogy">Relational Analogy</h4>
+<p>The Pilosa index is a flexible structure; it can represent any sort of high-cardinality binary matrix. We have explored a number of modeling patterns in Pilosa use cases; one accessible example is a direct analogy to the relational model, summarized here.</p>
+<p>Entities:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Relational</th>
+<th>Pilosa</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Database</td>
+<td>N/A <em>(internal: Holder)</em></td>
+</tr>
+<tr class="even">
+<td>Table</td>
+<td>Index</td>
+</tr>
+<tr class="odd">
+<td>Row</td>
+<td>Column</td>
+</tr>
+<tr class="even">
+<td>Column</td>
+<td>Field</td>
+</tr>
+<tr class="odd">
+<td>Value</td>
+<td>Row</td>
+</tr>
+<tr class="even">
+<td>Value (int)</td>
+<td>Field.Value (see <a href="#bsi-range-encoding">BSI</a>)</td>
+</tr>
+</tbody>
+</table>
+<p>Simple queries:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Relational</th>
+<th>Pilosa</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>select ID from People where Name = 'Bob'</code></td>
+<td><code>Row(Name=&quot;Bob&quot;)</code></td>
+</tr>
+<tr class="even">
+<td><code>select ID from People where Age &gt; 30</code></td>
+<td><code>Row(Age &gt; 30)</code></td>
+</tr>
+<tr class="odd">
+<td><code>select ID from People where Member = true</code></td>
+<td><code>Row(Member=0)</code></td>
+</tr>
+</tbody>
+</table>
+<p>Note that <code>Row(Member=0)</code> selects all entities with a bit set in row 0 of the Member field. We could just as well use row 1 to store this, in which case we would use <code>Row(Member=1)</code>, which looks a bit more intuitive. In the relational model, joins are often necessary. Because Pilosa supports extremely high cardinality in both rows and columns, many types of joins are accomplished with basic Pilosa queries across multiple fields. For example, this SQL join:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">AVG</span>(p.Age) <span class="keyword">from</span> People p</span><br><span class="line"><span class="keyword">inner</span> <span class="keyword">join</span> PersonCar pc <span class="keyword">on</span> pc.PersonID=p.ID</span><br><span class="line"><span class="keyword">inner</span> <span class="keyword">join</span> Cars c <span class="keyword">on</span> pc.CarID=c.ID</span><br><span class="line"><span class="keyword">where</span> c.Make = <span class="string">'Ford'</span></span><br></pre></td></tr></table></figure>
+<p>can be accomplished with a Pilosa query like this (note that <a href="../query-language/#sum">Sum</a> returns a json object containing both the sum and count, from which the average is easily computed):</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Sum(Row(Car-Make&#x3D;&quot;Ford&quot;), field&#x3D;Age)</span><br></pre></td></tr></table></figure>
+<p>This is one major component of Pilosa’s ability to combine relationships from multiple data stores.</p>
+<h4 id="ranked">Ranked</h4>
+<p>Ranked Fields maintain a sorted cache of column counts by Row ID (yielding the top rows by columns with a bit set in each). This cache facilitates the TopN query. The cache size defaults to 50,000 and can be set at Field creation.</p>
+<p><img src="/img/docs/field-ranked.png" alt="ranked field diagram" /> <em>Ranked field diagram</em></p>
+<h4 id="lru">LRU</h4>
+<p>The LRU cache maintains the most recently accessed Rows.</p>
+<p><img src="/img/docs/field-lru.png" alt="lru field diagram" /> <em>LRU field diagram</em></p>
+<h3 id="time-quantum">Time Quantum</h3>
+<p>Setting a time quantum on a field creates extra views which allow ranged Row queries down to the time interval specified. For example, if the time quantum is set to <code>YMD</code>, ranged Row queries down to the granularity of a day are supported.</p>
+<h3 id="attribute">Attribute</h3>
+<p>Attributes are arbitrary key/value pairs that can be associated with either rows or columns. This metadata is stored in a separate BoltDB data structure.</p>
+<p>Column-level attributes are common across an index. That is, each column attribute applies to all bits in the corresponding column, across all fields in an index. Row attributes apply to all bits in the corresponding row.</p>
+<h3 id="shard">Shard</h3>
+<p>Indexes are segmented into groups of columns called shards (previously known as slices). Each shard contains a fixed number of columns, which is the ShardWidth. ShardWidth is a constant that can only be modified at compile time, and before ingesting data. The default value is 2<sup>20</sup>.</p>
+<p>Query operations run in parallel, and they are evenly distributed across a cluster via a consistent hash algorithm.</p>
+<h3 id="field-type">Field Type</h3>
+<p>Upon creation, fields are configured to be of a certain type. Pilosa supports the following field types: <code>set</code>, <code>int</code>, <code>bool</code>, <code>time</code>, and <code>mutex</code>.</p>
+<h4 id="set">Set</h4>
+<p>Set is the default field type in Pilosa. Set fields represent a standard, binary matrix of rows and columns where each row key represents a possible field value. The following example creates a <code>set</code> field called “info” with a ranked cache containing up to 100,000 records.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl localhost:10101&#x2F;index&#x2F;repository&#x2F;field&#x2F;info \</span><br><span class="line">     -X POST \</span><br><span class="line">     -d &#39;&#123;&quot;options&quot;: &#123;&quot;type&quot;: &quot;set&quot;, &quot;cacheType&quot;: &quot;ranked&quot;, &quot;cacheSize&quot;:100000&#125;&#125;&#39;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;success&quot;:true&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="int">Int</h4>
+<p>Fields of type <code>int</code> are used to store integer values. Integer fields share the same columns as the other fields in the index, but values for the field must be integers that fall between the <code>min</code> and <code>max</code> values specified when creating the field. The following example creates an <code>int</code> field called “quantity” capable of storing values from -1000 to 2000:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl localhost:10101&#x2F;index&#x2F;repository&#x2F;field&#x2F;quantity \</span><br><span class="line">     -X POST \</span><br><span class="line">     -d &#39;&#123;&quot;options&quot;: &#123;&quot;type&quot;: &quot;int&quot;, &quot;min&quot;: -1000, &quot;max&quot;:2000&#125;&#125;&#39;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;success&quot;:true&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="bsi-range-encoding">BSI Range-Encoding</h5>
+<p>Bit-Sliced Indexing (BSI) is the storage method Pilosa uses to represent multi-bit integers in a bitmap index. Integers are stored as n-bit, range-encoded bit-sliced indexes of base-2, along with an additional row indicating “not null”. This means that a 16-bit integer will require 17 rows: one for each 0-bit of the 16 bit-slice components (the 1-bit does not need to be stored because with range-encoding the highest bit position is always 1) and one for the non-null row. Pilosa can evaluate <code>Row</code>, <code>Min</code>, <code>Max</code>, and <code>Sum</code> queries on these BSI integers. The result of a <code>Sum</code> query includes a count, which can be used to compute an average with no other overhead.</p>
+<p>Internally Pilosa stores each BSI <code>field</code> as a <code>view</code>. The rows of the <code>view</code> contain the base-2 representations of the integer values. Pilosa manages the base-2 offset and translation that efficiently packs the integer value within the minimum set of rows.</p>
+<p>For example, the following <code>Set()</code> queries executed against BSI fields will result in the data described in the diagram below:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Set(1, A&#x3D;1)</span><br><span class="line">Set(2, A&#x3D;2)</span><br><span class="line">Set(3, A&#x3D;3)</span><br><span class="line">Set(4, A&#x3D;7)</span><br><span class="line">Set(2, B&#x3D;1)</span><br><span class="line">Set(3, B&#x3D;6)</span><br></pre></td></tr></table></figure>
+<p><img src="/img/docs/field-bsi.png" alt="BSI field diagram" /> <em>BSI field diagram</em></p>
+<p>Check out this <a href="/blog/range-encoded-bitmaps/">blog post</a> for some more details about BSI in Pilosa.</p>
+<h4 id="time">Time</h4>
+<p>Time fields are similar to <code>set</code> fields, but in addition to row and column information, they also store a per-bit time value down to a defined granularity. The following example creates a <code>time</code> field called “event” which stores timestamp information down to a day granularity.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl localhost:10101&#x2F;index&#x2F;repository&#x2F;field&#x2F;event \</span><br><span class="line">     -X POST \</span><br><span class="line">     -d &#39;&#123;&quot;options&quot;: &#123;&quot;type&quot;: &quot;time&quot;, &quot;timeQuantum&quot;: &quot;YMD&quot;&#125;&#125;&#39;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;success&quot;:true&#125;</span><br></pre></td></tr></table></figure>
+<p>With <code>time</code> fields, data views are generated for each of the defined time segments. For example, for a field with a time quantum of <code>YMD</code>, the following <code>Set()</code> queries will result in the data described in the diagram below:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Set(3, A&#x3D;8, 2017-05-18T00:00)</span><br><span class="line">Set(3, A&#x3D;8, 2017-05-19T00:00)</span><br></pre></td></tr></table></figure>
+<p><img src="/img/docs/field-time-quantum.png" alt="time quantum field diagram" /> <em>Time quantum fueld diagram</em></p>
+<h4 id="mutex">Mutex</h4>
+<p>Mutex fields are similar to <code>set</code> fields, with the distinction of requiring the row value for each column to be mutually exclusive. In other words, each column can only have a single value for the field. If the field value for a column is updated on a <code>mutex</code> field, then the previous field value for that column will be cleared. This field type is like a field in an RDBMS table where every record contains a single value for a particular field.</p>
+<h4 id="boolean">Boolean</h4>
+<p>A boolean field is similar to a <code>mutex</code> field tracking only two values: <code>true</code> and <code>false</code>. Boolean fields do not maintain a sorted cache, nor do they support key values.</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/pilosa/" rel="tag"># pilosa</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/27/oozie%E8%B0%83%E5%BA%A6sqoop%E9%97%AE%E9%A2%98/" rel="next" title="采用hue使用oozie调度sqoop问题">
+                <i class="fa fa-chevron-left"></i> 采用hue使用oozie调度sqoop问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/28/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F2/" rel="prev" title="推荐系统2">
+                推荐系统2 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Peter Xu" />
+          <p class="site-author-name" itemprop="name">Peter Xu</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据模型"><span class="nav-text">数据模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概观"><span class="nav-text">概观</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#index"><span class="nav-text">Index</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#column"><span class="nav-text">Column</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#row"><span class="nav-text">Row</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#field"><span class="nav-text">Field</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#relational-analogy"><span class="nav-text">Relational Analogy</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ranked"><span class="nav-text">Ranked</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lru"><span class="nav-text">LRU</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#time-quantum"><span class="nav-text">Time Quantum</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#attribute"><span class="nav-text">Attribute</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#shard"><span class="nav-text">Shard</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#field-type"><span class="nav-text">Field Type</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#set"><span class="nav-text">Set</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#int"><span class="nav-text">Int</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#bsi-range-encoding"><span class="nav-text">BSI Range-Encoding</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#time"><span class="nav-text">Time</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mutex"><span class="nav-text">Mutex</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#boolean"><span class="nav-text">Boolean</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Peter Xu</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next" target="_blank" rel="noopener">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+</body>
+</html>
